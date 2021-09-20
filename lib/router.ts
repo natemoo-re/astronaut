@@ -12,7 +12,7 @@ const exists = async (path: string|URL) => {
   return false;
 }
 
-export async function handlePublic(req: Request, _base: URL): Promise<Response|undefined> {
+export async function handlePublic(req: Request): Promise<Response|undefined> {
   const { pathname } = new URL(req.url);
   if (extname(pathname) !== '' && await exists(`./public/${pathname}`)) {
     const content = await Deno.readFile(`./public/${pathname}`);
@@ -25,7 +25,7 @@ export async function handlePublic(req: Request, _base: URL): Promise<Response|u
   }
 }
 
-async function getPageHTML(req: Request, _base: URL): Promise<string|undefined> {
+async function getPageHTML(req: Request): Promise<string|undefined> {
   let { pathname } = new URL(req.url);
   if (pathname.endsWith('/')) {
     pathname = pathname + 'index.astro'
@@ -38,6 +38,7 @@ async function getPageHTML(req: Request, _base: URL): Promise<string|undefined> 
     try {
       const content = await Deno.readTextFile(fileURL);
       const template = await transform(content);
+      console.log(template.code);
       const html = await compile(template)
       return html;
     } catch (e) {
@@ -46,8 +47,8 @@ async function getPageHTML(req: Request, _base: URL): Promise<string|undefined> 
   }
 }
 
-export async function handlePage(req: Request, base: URL): Promise<Response|undefined> {
-    const html = await getPageHTML(req, base);
+export async function handlePage(req: Request): Promise<Response|undefined> {
+    const html = await getPageHTML(req);
     if (!html) return;
     return new Response(html, {
         headers: {
