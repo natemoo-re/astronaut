@@ -1,11 +1,17 @@
 import { handlePage, handlePublic } from './lib/router.ts';
 
-export default async function astronaut(req: Request, base: string) {
-    const baseURL = new URL(base);
-    const resPublic = await handlePublic(req, baseURL);
-    if (resPublic) return resPublic;
-    const resPage = await handlePage(req, baseURL);
-    if (resPage) return resPage;
+export default async function astronaut(req: Request) {
+    console.log(req.url);
+    const resPublic = await handlePublic(req);
+    if (resPublic) {
+        console.log('Found in public/');
+        return resPublic;
+    }
+    const resPage = await handlePage(req);
+    if (resPage) {
+        console.log('Found in src/pages/');
+        return resPage;
+    }
     return new Response('404', {
         status: 404,
     })
