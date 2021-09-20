@@ -12,10 +12,10 @@ const exists = async (path: string|URL) => {
   return false;
 }
 
-export async function handlePublic(req: Request, base: URL): Promise<Response|undefined> {
+export async function handlePublic(req: Request, _base: URL): Promise<Response|undefined> {
   const { pathname } = new URL(req.url);
-  if (extname(pathname) !== '' && await exists(new URL(`./public/${pathname}`, base))) {
-    const content = await Deno.readFile(new URL(`./public/${pathname}`, base));
+  if (extname(pathname) !== '' && await exists(`./public/${pathname}`)) {
+    const content = await Deno.readFile(`./public/${pathname}`);
     const contentType = mime.getType(extname(pathname).slice(1)) || 'text/plain';
     return new Response(content, {
       headers: {
@@ -25,7 +25,7 @@ export async function handlePublic(req: Request, base: URL): Promise<Response|un
   }
 }
 
-async function getPageHTML(req: Request, base: URL): Promise<string|undefined> {
+async function getPageHTML(req: Request, _base: URL): Promise<string|undefined> {
   let { pathname } = new URL(req.url);
   if (pathname.endsWith('/')) {
     pathname = pathname + 'index.astro'
@@ -33,8 +33,8 @@ async function getPageHTML(req: Request, base: URL): Promise<string|undefined> {
   if (extname(pathname) == '') {
     pathname = pathname + '.astro'
   }
-  const fileURL = new URL('./src/pages' + pathname, base);
-  if (await exists(`./src/pages/${pathname}`)) {
+  const fileURL = `./src/pages/${pathname}`;
+  if (await exists(fileURL)) {
     try {
       const content = await Deno.readTextFile(fileURL);
       const template = await transform(content);
