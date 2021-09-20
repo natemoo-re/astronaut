@@ -4,6 +4,7 @@ import { extname } from "https://deno.land/std@0.105.0/path/mod.ts";
 import { mime } from "https://deno.land/x/mimetypes@v1.0.0/mod.ts"
 
 export async function handlePublic(req: Request): Promise<Response|undefined> {
+  console.log(Deno.mainModule, req.url);
   const base = new URL(Deno.mainModule);
   const { pathname } = new URL(req.url);
   if (extname(pathname) !== '' && await exists(new URL(`./public/${pathname}`, base).toString())) {
@@ -18,6 +19,7 @@ export async function handlePublic(req: Request): Promise<Response|undefined> {
 }
 
 async function getPageHTML(req: Request): Promise<string|undefined> {
+  console.log(Deno.mainModule, req.url);
   const base = new URL(Deno.mainModule);
   let { pathname } = new URL(req.url);
   if (pathname.endsWith('/')) {
