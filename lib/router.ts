@@ -1,11 +1,20 @@
 import { transform, compile } from 'https://deno.land/x/astro_compiler@v0.1.0-canary.44/mod.ts'
-import { exists } from "https://deno.land/std@0.105.0/fs/exists.ts";
 import { extname } from "https://deno.land/std@0.105.0/path/mod.ts";
 import { mime } from "https://deno.land/x/mimetypes@v1.0.0/mod.ts"
 
+const exists = async (path: string|URL) => {
+  try {
+    await Deno.readFile(path);
+    return true;
+  } catch (_) {
+    // Do nothing
+  }
+  return false;
+}
+
 export async function handlePublic(req: Request, base: URL): Promise<Response|undefined> {
   const { pathname } = new URL(req.url);
-  if (extname(pathname) !== '' && await exists(new URL(`./public/${pathname}`, base).toString())) {
+  if (extname(pathname) !== '' && await exists(new URL(`./public/${pathname}`, base))) {
     const content = await Deno.readFile(new URL(`./public/${pathname}`, base));
     const contentType = mime.getType(extname(pathname).slice(1)) || 'text/plain';
     return new Response(content, {

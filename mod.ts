@@ -1,8 +1,7 @@
 import { handlePage, handlePublic } from './lib/router.ts';
 
-export default async function astronaut(req: Request, base: string|URL) {
+export default async function astronaut(req: Request, base: string|URL = Deno.cwd()) {
     base = typeof base === 'string' ? new URL(base) : base;
-    console.log(req.url);
     const resPublic = await handlePublic(req, base);
     if (resPublic) {
         console.log('Found in public/');
