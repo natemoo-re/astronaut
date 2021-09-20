@@ -33,13 +33,12 @@ async function getPageHTML(req: Request): Promise<string|undefined> {
   if (extname(pathname) == '') {
     pathname = pathname + '.astro'
   }
-  const fileURL = `./src/pages/${pathname}`;
+  const fileURL = `./pages/${pathname}`;
   if (await exists(fileURL)) {
     try {
       const content = await Deno.readTextFile(fileURL);
       const template = await transform(content);
-      const { default: mod } = await import(`data:text/typescript;base64,${btoa(template.code)}`);
-      console.log(mod);
+      console.log(template);
       return `<h1>Placeholder</h1>`;
     } catch (e) {
       return `<h1>Error!</h1><pre>${e}</pre>`
